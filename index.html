@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>兒童中文神射手 - 認字靶場遊戲</title>
+  <style>
+    :root {
+      --primary-color: #4A90E2;
+      --secondary-color: #FF6B6B;
+      --accent-color: #FFD166;
+      --success-color: #06D6A0;
+      --dark-color: #2B2D42;
+      --light-color: #F8F9FA;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      background: linear-gradient(135deg, #1a1c2e 0%, #2b3054 100%);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--dark-color);
+    }
+
+    #app-container {
+      width: 100vw;
+      height: 100vh;
+      max-width: 1024px;
+      max-height: 768px;
+      position: relative;
+      background: #87CEEB;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border-radius: 12px;
+    }
+
+    /* Target Range Background */
+    .sky-bg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, #4a90e2 0%, #a0c4ff 60%, #cbd5e1 100%);
+      z-index: 1;
+    }
+
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 50px;
+      animation: floatCloud linear infinite;
+    }
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 50%;
+    }
+    .cloud1 { width: 120px; height: 40px; top: 10%; left: -120px; animation-duration: 25s; }
+    .cloud1::before { width: 50px; height: 50px; top: -20px; left: 20px; }
+    .cloud1::after { width: 40px; height: 40px; top: -15px; left: 55px; }
+
+    .cloud2 { width: 160px; height: 50px; top: 25%; left: -160px; animation-duration: 35s; animation-delay: 5s; }
+    .cloud2::before { width: 60px; height: 60px; top: -25px; left: 30px; }
+    .cloud2::after { width: 50px; height: 50px; top: -20px; left: 75px; }
+
+    @keyframes floatCloud {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(1200px); }
+    }
+
+    /* Screen Views */
+    .screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: opacity 0.4s ease;
+    }
+
+    .hidden {
+      display: none !important;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Setup Screen */
+    #setup-screen {
+      background: rgba(255, 255, 255, 0.95);
+      z-index: 30;
+      overflow-y: auto;
+    }
+
+    .card {
+      background: white;
+      padding: 25px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 550px;
+      text-align: center;
+      border: 4px solid var(--accent-color);
+    }
+
+    h1 {
+      color: #2b3054;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    p.subtitle {
+      color: #666;
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .word-input-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .word-input-row label {
+      font-weight: bold;
+      width: 60px;
+      color: var(--primary-color);
+    }
+    .word-input-row input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 18px;
+      text-align: center;
+      outline: none;
+    }
+    .word-input-row input:focus {
+      border-color: var(--primary-color);
+    }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+      background: #f0f4f8;
+      padding: 12px;
+      border-radius: 12px;
+    }
+    .setting-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .setting-item select {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      background: white;
+    }
+
+    .btn-start {
+      background: linear-gradient(to bottom, #FF8E53, #FF6B6B);
+      color: white;
+      border: none;
+      padding: 14px 40px;
+      font-size: 22px;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #d04040, 0 10px 15px rgba(0,0,0,0.2);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-start:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #d04040, 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Gameplay HUD */
+    #hud {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      right: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 15;
+      pointer-events: none;
+    }
+    .hud-box {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 18px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      border:
